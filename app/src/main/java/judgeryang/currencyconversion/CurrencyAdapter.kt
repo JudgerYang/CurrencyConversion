@@ -8,7 +8,7 @@ import androidx.annotation.UiThread
 import androidx.recyclerview.widget.RecyclerView
 
 
-class CurrencyAdapter(val listener: Listener) : RecyclerView.Adapter<CurrencyAdapter.ViewHolder>() {
+class CurrencyAdapter(val listener: CurrencyAdapterListener) : RecyclerView.Adapter<CurrencyAdapter.ViewHolder>() {
     var showExchangeRate: Boolean = false
     private val currencyMap: MutableMap<String, CurrencyData> = mutableMapOf()
 
@@ -21,6 +21,7 @@ class CurrencyAdapter(val listener: Listener) : RecyclerView.Adapter<CurrencyAda
 
     @UiThread
     fun setExchangeList(exchangeList: List<CurrencyData>) {
+        // Merge the rate into the current data
         exchangeList.forEach { data ->
             currencyMap[data.shortName]?.rate = data.rate
         }
@@ -55,12 +56,12 @@ class CurrencyAdapter(val listener: Listener) : RecyclerView.Adapter<CurrencyAda
             }
 
             itemView.setOnClickListener {
-                listener.onCurrencyClick(data)
+                listener.onCurrencyItemClick(data)
             }
         }
     }
 }
 
-abstract class Listener {
-    abstract fun onCurrencyClick(data: CurrencyData)
+abstract class CurrencyAdapterListener {
+    abstract fun onCurrencyItemClick(data: CurrencyData)
 }

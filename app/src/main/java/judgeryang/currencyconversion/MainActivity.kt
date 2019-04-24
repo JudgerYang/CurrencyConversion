@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
             currency_to.isSelected = false
             currency_list.visibility = View.VISIBLE
             adapter?.showExchangeRate = false
+            adapter?.notifyDataSetChanged()
         }
 
         currency_to.setOnClickListener {
@@ -42,6 +43,7 @@ class MainActivity : AppCompatActivity() {
             currency_to.isSelected = true
             currency_list.visibility = View.VISIBLE
             adapter?.showExchangeRate = true
+            adapter?.notifyDataSetChanged()
         }
 
         edit_amount.addTextChangedListener(object: TextWatcher {
@@ -61,8 +63,8 @@ class MainActivity : AppCompatActivity() {
         currency_list.layoutManager = LinearLayoutManager(this)
     }
 
-    private val currencyAdapterListener: Listener = object : Listener() {
-        override fun onCurrencyClick(data: CurrencyData) {
+    private val currencyAdapterListener: CurrencyAdapterListener = object : CurrencyAdapterListener() {
+        override fun onCurrencyItemClick(data: CurrencyData) {
             currency_list.visibility = View.GONE
 
             if (currency_from.isSelected) {
@@ -85,6 +87,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Calculate the exchange result and display it in the result EditText
     private fun exchange() {
         try {
             val rate: Float = currentData?.rate ?: 0f
