@@ -29,10 +29,12 @@
             android:text="@string/default_from" />
 
         <EditText
-            android:id="@+id/amount"
+            android:id="@+id/edit_amount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
             android:layout_weight="7"
+            android:imeOptions="actionDone"
             android:inputType="number"
             android:text="@string/default_amount"
             android:textAlignment="textEnd"
@@ -64,9 +66,10 @@
             android:text="@string/default_to" />
 
         <EditText
-            android:id="@+id/result"
+            android:id="@+id/edit_result"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
             android:layout_weight="7"
             android:enabled="false"
             android:inputType="number"

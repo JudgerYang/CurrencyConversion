@@ -9,12 +9,21 @@ import androidx.recyclerview.widget.RecyclerView
 
 
 class CurrencyAdapter(val listener: Listener) : RecyclerView.Adapter<CurrencyAdapter.ViewHolder>() {
-    private val currencyList: ArrayList<CurrencyData> = ArrayList()
+    var showExchangeRate: Boolean = false
+    private val currencyMap: MutableMap<String, CurrencyData> = mutableMapOf()
 
     @UiThread
-    fun setCurrencyList(list: List<CurrencyData>) {
-        currencyList.clear()
-        currencyList.addAll(list)
+    fun setCurrencyList(map: Map<String, CurrencyData>) {
+        currencyMap.clear()
+        currencyMap.putAll(map)
+        notifyDataSetChanged()
+    }
+
+    @UiThread
+    fun setExchangeList(exchangeList: List<CurrencyData>) {
+        exchangeList.forEach { data ->
+            currencyMap[data.shortName]?.rate = data.rate
+        }
         notifyDataSetChanged()
     }
 
@@ -23,19 +32,28 @@ class CurrencyAdapter(val listener: Listener) : RecyclerView.Adapter<CurrencyAda
         return ViewHolder(view)
     }
 
-    override fun getItemCount(): Int = currencyList.count()
+    override fun getItemCount(): Int = currencyMap.count()
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(currencyList[position])
+        holder.bind(currencyMap.values.elementAt(position))
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val currencyShort = itemView.findViewById<TextView>(R.id.currency_short)
-        private val currencyLong = itemView.findViewById<TextView>(R.id.currency_long)
+        private val currencyFull = itemView.findViewById<TextView>(R.id.currency_full)
+        private val exchangeRate = itemView.findViewById<TextView>(R.id.exchange_rate)
 
         fun bind(data: CurrencyData) {
             currencyShort.text = data.shortName
-            currencyLong.text = data.longName
+            currencyFull.text = data.fullName
+
+            if (showExchangeRate && data.rate != null) {
+                exchangeRate.visibility = View.VISIBLE
+                exchangeRate.text = data.rate.toString()
+            } else {
+                exchangeRate.visibility = View.GONE
+            }
+
             itemView.setOnClickListener {
                 listener.onCurrencyClick(data)
             }

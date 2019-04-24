@@ -15,15 +15,15 @@ class CurrencyApi(context: Context, private val accessKey: String) {
     private val gson = Gson()
     private var requestQueue: RequestQueue = Volley.newRequestQueue(context)
 
-    fun requestList(consumer: Consumer<List<CurrencyData>>, errorHandler: Consumer<Throwable>) {
+    fun requestList(consumer: Consumer<Map<String, CurrencyData>>, errorHandler: Consumer<Throwable>) {
         val url = buildApiUrl("list").build().toString()
 
         val stringRequest = StringRequest(url, Response.Listener<String> { json ->
             val result = gson.fromJson(json, CurrencyListResult::class.java)
-            val currencyList = result.currencies.entries.flatMap { (shortName, longName) ->
-                listOf(CurrencyData(shortName, longName))
+            val map = result.currencies.mapValues { entry ->
+                CurrencyData(entry.key, entry.value, null)
             }
-            consumer.accept(currencyList)
+            consumer.accept(map)
         }, Response.ErrorListener { error ->
             errorHandler.accept(error)
         })
@@ -31,14 +31,14 @@ class CurrencyApi(context: Context, private val accessKey: String) {
         requestQueue.add(stringRequest)
     }
 
-    fun requestExchange(source: String, consumer: Consumer<List<ExchangeData>>, errorHandler: Consumer<Throwable>) {
+    fun requestExchange(source: String, consumer: Consumer<List<CurrencyData>>, errorHandler: Consumer<Throwable>) {
         val url = buildApiUrl("live").appendQueryParameter("source", source).build().toString()
 
         val stringRequest = StringRequest(url, Response.Listener<String> { json ->
             val result = gson.fromJson(json, LiveResult::class.java)
             val exchangeList = result.quotes.entries.flatMap { (quote, rate) ->
-                val to = quote.removeSuffix(source)
-                listOf(ExchangeData(to, rate))
+                val to = quote.removePrefix(source)
+                listOf(CurrencyData(to, to, rate))
             }
             consumer.accept(exchangeList)
         }, Response.ErrorListener { error ->
@@ -62,14 +62,10 @@ data class CurrencyListResult(
 
 data class CurrencyData(
     val shortName: String,
-    val longName: String
+    val fullName: String,
+    var rate: Float?
 )
 
 data class LiveResult(
     val quotes: Map<String, Float>
-)
-
-data class ExchangeData(
-    val to: String,
-    val rate: Float
 )
