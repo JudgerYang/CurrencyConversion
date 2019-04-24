@@ -78,10 +78,20 @@
             tools:ignore="Autofill,LabelFor" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/text_rate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bar_to"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="15dp"
+        android:textAlignment="textEnd"
+        android:visibility="invisible" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/currency_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/bar_to"
+        android:layout_below="@id/text_rate"
         android:visibility="gone" />
 </RelativeLayout>

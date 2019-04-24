@@ -73,6 +73,9 @@ class MainActivity : AppCompatActivity() {
 
                 requestExchange(data)
             } else if (currency_to.isSelected) {
+                text_rate.visibility = View.VISIBLE
+                text_rate.text = getString(R.string.exchange_rate, data.rate)
+
                 currency_to.text = data.shortName
                 currency_to.isSelected = false
 
@@ -109,6 +112,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestExchange(data: CurrencyData) {
+        text_rate.visibility = View.INVISIBLE
         currency_to.text = getString(R.string.loading)
         currency_to.isEnabled = false
 
