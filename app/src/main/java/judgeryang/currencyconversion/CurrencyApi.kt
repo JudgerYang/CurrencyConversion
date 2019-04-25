@@ -10,7 +10,7 @@ import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 
 const val BASE_URL = "https://apilayer.net/"
-const val CACHE_EXPIRE = 30000  // 30 seconds
+const val CACHE_EXPIRE = 30 * 60 * 1000  // 30 minutes
 
 class CurrencyApi(context: Context, private val accessKey: String) {
     private val gson = Gson()
